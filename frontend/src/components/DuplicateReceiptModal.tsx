@@ -93,7 +93,7 @@ export const DuplicateReceiptModal: React.FC<DuplicateReceiptModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
       <div className="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-200 overflow-hidden my-8">
-          {/* Header */}
+        {/* Header */}
         <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
           <div className="flex items-center space-x-2">
             <FileText className="w-5 h-5 text-blue-600" />
@@ -175,7 +175,7 @@ export const DuplicateReceiptModal: React.FC<DuplicateReceiptModalProps> = ({
             >
               {/* DUPLICATE COPY Watermark Stamp */}
               <div className="border-2 border-red-600 text-red-600 font-extrabold text-sm px-3 py-1 rounded text-center tracking-widest uppercase bg-red-50/50">
-                ★ DUPLICATE COPY / द्वितीय प्रति (प्रति #{receipt.duplicateCopyNumber}) ★
+                ★ {t(`द्वितीय प्रति (प्रति #${receipt.duplicateCopyNumber})`, `DUPLICATE COPY (#${receipt.duplicateCopyNumber})`)} ★
               </div>
 
               {/* Shop Header */}
@@ -235,8 +235,8 @@ export const DuplicateReceiptModal: React.FC<DuplicateReceiptModalProps> = ({
                 <table className="w-full text-left border-collapse">
                   <thead>
                     <tr className="border-b border-slate-300 text-[10px] font-bold text-slate-500 uppercase">
-                      <th className="py-1">कपड़े का नाम / Garment</th>
-                      <th className="py-1 text-right">संख्या / Qty</th>
+                      <th className="py-1">{t("कपड़े का नाम", "Garment Name")}</th>
+                      <th className="py-1 text-right">{t("संख्या", "Qty")}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
@@ -247,16 +247,16 @@ export const DuplicateReceiptModal: React.FC<DuplicateReceiptModalProps> = ({
                           {g.notes && <span className="text-[10px] text-slate-400 block font-sans">{g.notes}</span>}
                         </td>
                         <td className="py-1.5 text-right font-bold text-slate-900">
-                          {g.quantity} Pcs
+                          {g.quantity} {t("नग", "Pcs")}
                         </td>
                       </tr>
                     ))}
                   </tbody>
                   <tfoot>
                     <tr className="border-t-2 border-slate-900 font-bold text-slate-900">
-                      <td className="py-2">कुल कपड़े / TOTAL GARMENTS:</td>
+                      <td className="py-2">{t("कुल कपड़े:", "TOTAL GARMENTS:")}</td>
                       <td className="py-2 text-right text-sm font-black">
-                        {receipt.expectedQuantity} नग
+                        {receipt.expectedQuantity} {t("नग", "Pcs")}
                       </td>
                     </tr>
                   </tfoot>
@@ -296,7 +296,7 @@ export const DuplicateReceiptModal: React.FC<DuplicateReceiptModalProps> = ({
               onClick={onClose}
               className="text-xs text-slate-500 font-semibold cursor-pointer"
             >
-              बंद करें / Close
+              {t("बंद करें", "Close")}
             </button>
 
             <button
@@ -304,7 +304,7 @@ export const DuplicateReceiptModal: React.FC<DuplicateReceiptModalProps> = ({
               className="px-5 py-2.5 rounded-xl bg-blue-600 text-white font-bold text-xs hover:bg-blue-700 transition cursor-pointer flex items-center space-x-1.5 shadow-xs"
             >
               <Printer className="w-4 h-4" />
-              <span>रसीद प्रिंट करें / Print Receipt</span>
+              <span>{t("रसीद प्रिंट करें", "Print Receipt")}</span>
             </button>
           </div>
         </div>

@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import type { StaffUserDto, GarmentTypeDto, UserRole } from "@/lib/types";
 import { useLanguage } from "@/lib/LanguageContext";
+import { useShop } from "@/lib/ShopContext";
 import {
   Settings,
   Shield,
@@ -34,6 +35,7 @@ export const SettingsModal: React.FC = () => {
   const [isDeletingStaff, setIsDeletingStaff] = useState(false);
 
   const { t } = useLanguage();
+  const { refreshSettings } = useShop();
 
   async function handleDeleteStaff() {
     if (!staffToDelete) return;
@@ -141,6 +143,7 @@ export const SettingsModal: React.FC = () => {
 
       if (res.ok) {
         setSaveSuccess(true);
+        await refreshSettings();
         setTimeout(() => setSaveSuccess(false), 3000);
       }
     } catch (err) {
@@ -452,7 +455,7 @@ export const SettingsModal: React.FC = () => {
 
             <div className="sm:col-span-2">
               <label className="block font-bold text-slate-700 mb-1">
-                System User Access Token (Permanent / Meta Cloud API)
+                {t("सिस्टम यूज़र एक्सेस टोकन (स्थायी Meta Cloud API)", "System User Access Token (Permanent / Meta Cloud API)")}
               </label>
               <input
                 type="password"
@@ -560,9 +563,9 @@ export const SettingsModal: React.FC = () => {
                   onChange={(e) => setNewStaffRole(e.target.value as UserRole)}
                   className="px-3 py-1.5 rounded-lg border border-slate-300 bg-white font-bold"
                 >
-                  <option value="SHOPKEEPER">{t("दुकानदार / Shopkeeper (ऑर्डर व डिलीवरी)", "Shopkeeper (Orders & Handover)")}</option>
-                  <option value="WORKSHOP">{t("कार्यशाला / Workshop (बंडल स्कैनिंग)", "Workshop (Bundle QR Scanning)")}</option>
-                  <option value="ADMIN">{t("मालिक / Owner (पूर्ण अधिकार)", "Owner (Full Admin Access)")}</option>
+                  <option value="SHOPKEEPER">{t("दुकानदार (ऑर्डर व डिलीवरी)", "Shopkeeper (Orders & Handover)")}</option>
+                  <option value="WORKSHOP">{t("कार्यशाला (बंडल स्कैनिंग)", "Workshop (Bundle QR Scanning)")}</option>
+                  <option value="ADMIN">{t("मालिक (पूर्ण अधिकार)", "Owner (Full Admin Access)")}</option>
                 </select>
                 <input
                   type="password"
@@ -607,17 +610,17 @@ export const SettingsModal: React.FC = () => {
                       <span className="font-bold text-slate-900 text-sm">{st.name}</span>
                       <span
                         className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${st.role === "ADMIN"
-                            ? "bg-purple-100 text-purple-800 border-purple-200"
-                            : st.role === "SHOPKEEPER"
-                              ? "bg-blue-100 text-blue-800 border-blue-200"
-                              : "bg-amber-100 text-amber-800 border-amber-200"
+                          ? "bg-purple-100 text-purple-800 border-purple-200"
+                          : st.role === "SHOPKEEPER"
+                            ? "bg-blue-100 text-blue-800 border-blue-200"
+                            : "bg-amber-100 text-amber-800 border-amber-200"
                           }`}
                       >
                         {st.role === "ADMIN" ? "OWNER" : st.role}
                       </span>
                       {!st.isActive && (
                         <span className="text-[10px] bg-red-100 text-red-700 font-bold px-1.5 py-0.5 rounded border border-red-200">
-                          खाता बंद / Inactive
+                          {t("खाता बंद", "Inactive")}
                         </span>
                       )}
                     </div>
@@ -641,9 +644,9 @@ export const SettingsModal: React.FC = () => {
                       }
                       className="px-2.5 py-1.5 rounded-lg border border-slate-300 text-xs font-semibold bg-slate-50 text-slate-800"
                     >
-                      <option value="ADMIN">मालिक (Owner)</option>
-                      <option value="SHOPKEEPER">दुकानदार (Shopkeeper)</option>
-                      <option value="WORKSHOP">कार्यशाला (Workshop)</option>
+                      <option value="ADMIN">{t("मालिक", "Owner")}</option>
+                      <option value="SHOPKEEPER">{t("दुकानदार", "Shopkeeper")}</option>
+                      <option value="WORKSHOP">{t("कार्यशाला", "Workshop")}</option>
                     </select>
 
                     <select
@@ -658,12 +661,12 @@ export const SettingsModal: React.FC = () => {
                         }))
                       }
                       className={`px-2.5 py-1.5 rounded-lg border text-xs font-semibold ${draft.isActive
-                          ? "bg-emerald-50 text-emerald-800 border-emerald-300"
-                          : "bg-red-50 text-red-800 border-red-300"
+                        ? "bg-emerald-50 text-emerald-800 border-emerald-300"
+                        : "bg-red-50 text-red-800 border-red-300"
                         }`}
                     >
-                      <option value="active">सक्रिय / Active</option>
-                      <option value="inactive">निष्क्रिय / Disabled</option>
+                      <option value="active">{t("सक्रिय", "Active")}</option>
+                      <option value="inactive">{t("निष्क्रिय", "Disabled")}</option>
                     </select>
 
                     {isChanged && (
@@ -672,16 +675,16 @@ export const SettingsModal: React.FC = () => {
                         disabled={isBusy}
                         className="px-3 py-1.5 rounded-lg bg-emerald-600 text-white font-bold text-xs hover:bg-emerald-700 transition cursor-pointer disabled:opacity-50"
                       >
-                        {isBusy ? "सेव..." : "सेव करें / Save"}
+                        {isBusy ? t("सेव...", "Saving...") : t("सेव करें", "Save")}
                       </button>
                     )}
 
-                    {/* Delete Staff Icon Button (Only shown if disabled or not current owner) */}
+                    {/* Delete Staff Icon Button */}
                     <button
                       type="button"
                       onClick={() => setStaffToDelete(st)}
                       className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition cursor-pointer"
-                      title="स्टाफ खाता डेटाबेस से डिलीट करें / Delete Staff Member"
+                      title={t("स्टाफ खाता डेटाबेस से डिलीट करें", "Delete Staff Member")}
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -701,10 +704,10 @@ export const SettingsModal: React.FC = () => {
                   </div>
                   <div>
                     <h3 className="font-black text-sm text-slate-900">
-                      स्टाफ खाता डिलीट करें? / Delete Account?
+                      {t("स्टाफ खाता डिलीट करें?", "Delete Account?")}
                     </h3>
                     <p className="text-[11px] text-slate-500">
-                      यह खाता स्थायी रूप से डेटाबेस से हट जाएगा।
+                      {t("यह खाता स्थायी रूप से डेटाबेस से हट जाएगा।", "This account will be permanently removed.")}
                     </p>
                   </div>
                 </div>
@@ -718,7 +721,10 @@ export const SettingsModal: React.FC = () => {
                 </div>
 
                 <p className="text-[11px] text-slate-500 leading-relaxed">
-                  क्या आप वाकई इस स्टाफ सदस्य को हटाना चाहते हैं? इसके बाद यह स्टाफ लॉगिन नहीं कर पाएगा।
+                  {t(
+                    "क्या आप वाकई इस स्टाफ सदस्य को हटाना चाहते हैं? इसके बाद यह स्टाफ लॉगिन नहीं कर पाएगा।",
+                    "Are you sure you want to delete this staff member? They will no longer be able to log in."
+                  )}
                 </p>
 
                 <div className="flex justify-end space-x-2 pt-2">
@@ -728,7 +734,7 @@ export const SettingsModal: React.FC = () => {
                     disabled={isDeletingStaff}
                     className="px-3.5 py-1.5 rounded-xl border border-slate-300 text-xs font-semibold text-slate-600 hover:bg-slate-100 transition cursor-pointer"
                   >
-                    रद्द करें / Cancel
+                    {t("रद्द करें", "Cancel")}
                   </button>
                   <button
                     type="button"
@@ -737,7 +743,7 @@ export const SettingsModal: React.FC = () => {
                     className="px-4 py-1.5 rounded-xl bg-red-600 text-white font-bold text-xs hover:bg-red-700 transition cursor-pointer disabled:opacity-50 flex items-center space-x-1"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
-                    <span>{isDeletingStaff ? "हटा रहे हैं..." : "हाँ, डिलीट करें / Delete"}</span>
+                    <span>{isDeletingStaff ? t("हटा रहे हैं...", "Deleting...") : t("हाँ, डिलीट करें", "Yes, Delete")}</span>
                   </button>
                 </div>
               </div>
@@ -752,26 +758,28 @@ export const SettingsModal: React.FC = () => {
           <div className="flex items-center justify-between border-b border-slate-100 pb-3">
             <div>
               <h3 className="text-sm font-bold text-slate-900">
-                परिधान कैटलॉग / Predefined Garment Catalogue ({garments.length})
+                {t(`परिधान कैटलॉग (${garments.length})`, `Garments Catalogue (${garments.length})`)}
               </h3>
-              <p className="text-slate-500">हिंदी और अंग्रेजी नामों के साथ कपड़े।</p>
+              <p className="text-slate-500">
+                {t("हिंदी और अंग्रेजी नामों के साथ कपड़े।", "Predefined garment catalogue with Hindi & English names.")}
+              </p>
             </div>
             <button
               onClick={() => setShowAddGarment(!showAddGarment)}
               className="px-3.5 py-1.5 rounded-lg bg-purple-600 text-white font-bold hover:bg-purple-700 cursor-pointer"
             >
-              + नया कपड़ा जोड़ें / Add Garment
+              + {t("नया कपड़ा जोड़ें", "Add Garment")}
             </button>
           </div>
 
           {showAddGarment && (
             <form onSubmit={handleCreateGarment} className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-3">
-              <h4 className="font-bold text-slate-900">नया कपड़ा जोड़ें:</h4>
+              <h4 className="font-bold text-slate-900">{t("नया कपड़ा जोड़ें:", "Add New Garment:")}</h4>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <input
                   type="text"
                   required
-                  placeholder="हिंदी नाम (उदा. शेरवानी)"
+                  placeholder={t("हिंदी नाम (उदा. शेरवानी)", "Hindi Name (e.g. Sherwani)")}
                   value={newHindiName}
                   onChange={(e) => setNewHindiName(e.target.value)}
                   className="px-3 py-1.5 rounded-lg border border-slate-300 bg-white"
@@ -779,7 +787,7 @@ export const SettingsModal: React.FC = () => {
                 <input
                   type="text"
                   required
-                  placeholder="English Name (e.g. Sherwani)"
+                  placeholder={t("English Name (उदा. Sherwani)", "English Name (e.g. Sherwani)")}
                   value={newEnglishName}
                   onChange={(e) => setNewEnglishName(e.target.value)}
                   className="px-3 py-1.5 rounded-lg border border-slate-300 bg-white"
@@ -789,27 +797,27 @@ export const SettingsModal: React.FC = () => {
                   onChange={(e) => setNewCategory(e.target.value)}
                   className="px-3 py-1.5 rounded-lg border border-slate-300 bg-white"
                 >
-                  <option value="Men">Men</option>
-                  <option value="Women">Women</option>
-                  <option value="Casual">Casual</option>
-                  <option value="Formal">Formal</option>
-                  <option value="Winter">Winter</option>
-                  <option value="Household">Household</option>
+                  <option value="Men">{t("पुरुष (Men)", "Men")}</option>
+                  <option value="Women">{t("महिला (Women)", "Women")}</option>
+                  <option value="Casual">{t("कैजुअल (Casual)", "Casual")}</option>
+                  <option value="Formal">{t("फॉर्मल (Formal)", "Formal")}</option>
+                  <option value="Winter">{t("सर्दियों के (Winter)", "Winter")}</option>
+                  <option value="Household">{t("घरेलू / चादर (Household)", "Household")}</option>
                 </select>
               </div>
               <div className="flex justify-end space-x-2">
                 <button
                   type="button"
                   onClick={() => setShowAddGarment(false)}
-                  className="px-3 py-1 text-slate-600"
+                  className="px-3 py-1 text-slate-600 cursor-pointer"
                 >
-                  रद्द करें
+                  {t("रद्द करें", "Cancel")}
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-1.5 rounded-lg bg-purple-600 text-white font-bold hover:bg-purple-700"
+                  className="px-4 py-1.5 rounded-lg bg-purple-600 text-white font-bold hover:bg-purple-700 cursor-pointer"
                 >
-                  कैटलॉग में जोड़ें / Save
+                  {t("कैटलॉग में जोड़ें", "Save Garment")}
                 </button>
               </div>
             </form>
@@ -839,10 +847,13 @@ export const SettingsModal: React.FC = () => {
         <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-xs space-y-4 text-xs">
           <div className="border-b border-slate-100 pb-3">
             <h3 className="text-sm font-bold text-slate-900">
-              स्टाफ गतिविधि और ऑडिट ट्रेल्स / Staff Activity & Audit Logs ({auditLogs.length})
+              {t(`स्टाफ गतिविधि और ऑडिट ट्रेल्स (${auditLogs.length})`, `Staff Activity & Audit Logs (${auditLogs.length})`)}
             </h3>
             <p className="text-slate-500">
-              ऑर्डर निर्माण, भौतिक मात्रा जाँच, QR जनरेशन, QR स्कैनिंग और डिलीवरी की पूरी ऑडिट ट्रेल।
+              {t(
+                "ऑर्डर निर्माण, भौतिक मात्रा जाँच, QR जनरेशन, QR स्कैनिंग और डिलीवरी की पूरी ऑडिट ट्रेल।",
+                "Full immutable audit trail of order creation, quantity checks, QR generation, scanning, and handovers."
+              )}
             </p>
           </div>
 
@@ -857,7 +868,7 @@ export const SettingsModal: React.FC = () => {
                     <span className="text-slate-700 font-semibold">{log.details}</span>
                   </div>
                   <p className="text-[11px] text-slate-400 mt-1">
-                    स्टाफ: <strong>{log.staffName || "System"}</strong> ({log.staffRole || "Automated"}) • इकाई: {log.entityType}
+                    {t("स्टाफ", "Staff")}: <strong>{log.staffName || "System"}</strong> ({log.staffRole || "Automated"}) • {t("इकाई", "Entity")}: {log.entityType}
                   </p>
                 </div>
 

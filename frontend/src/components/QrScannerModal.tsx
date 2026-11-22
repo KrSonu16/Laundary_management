@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import confetti from "canvas-confetti";
+import { useLanguage } from "@/lib/LanguageContext";
+import { useShop } from "@/lib/ShopContext";
 import {
   X,
   Camera,
@@ -26,6 +28,9 @@ export const QrScannerModal: React.FC<QrScannerModalProps> = ({
   onClose,
   onScanSuccess,
 }) => {
+  const { t } = useLanguage();
+  const { shopName } = useShop();
+
   const [isScanning, setIsScanning] = useState(false);
   const [cameraError, setCameraError] = useState<string | null>(null);
   const [manualToken, setManualToken] = useState("");
@@ -77,12 +82,12 @@ export const QrScannerModal: React.FC<QrScannerModalProps> = ({
             })
             .catch((err: unknown) => {
               console.warn("Camera start warning:", err);
-              setCameraError("Camera not accessible or permission denied. You can use Quick Test Token below.");
+              setCameraError(t("कैमरा उपलब्ध नहीं है। आप नीचे दिए गए टोकन बॉक्स से भी टेस्ट कर सकते हैं।", "Camera not accessible or permission denied. You can use Quick Test Token below."));
               setIsScanning(false);
             });
         })
-        .catch((err) => {
-          setCameraError("Failed to load camera scanner component.");
+        .catch(() => {
+          setCameraError(t("कैमरा स्कैनर लोड करने में विफल।", "Failed to load camera scanner component."));
         });
     }
 
@@ -110,7 +115,7 @@ export const QrScannerModal: React.FC<QrScannerModalProps> = ({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           token: token.trim(),
-          deviceInfo: "Android Mobile Scanner / Web Browser",
+          deviceInfo: "Mobile Scanner / Web Browser",
         }),
       });
 
@@ -126,8 +131,8 @@ export const QrScannerModal: React.FC<QrScannerModalProps> = ({
 
         const previewMsg = `नमस्ते ${data.order?.customerName || "Customer"} Ji,
 आपका Laundry Order ${data.order?.orderNumber} तैयार है।
-आप अपने कपड़े DC Smart Laundry की दुकान से प्राप्त कर सकते हैं।
-धन्यवाद! DC Smart Laundry`;
+आप अपने कपड़े ${shopName} की दुकान से प्राप्त कर सकते हैं।
+धन्यवाद! ${shopName}`;
 
         setScanResult({
           success: true,
@@ -143,13 +148,13 @@ export const QrScannerModal: React.FC<QrScannerModalProps> = ({
       } else {
         setScanResult({
           success: false,
-          message: data.message || data.error || "Scan failed",
+          message: data.message || data.error || t("स्कैन विफल", "Scan failed"),
         });
       }
     } catch (err: unknown) {
       setScanResult({
         success: false,
-        message: err instanceof Error ? err.message : "Error submitting scan",
+        message: err instanceof Error ? err.message : t("स्कैन सबमिट करने में त्रुटि", "Error submitting scan"),
       });
     } finally {
       setIsProcessing(false);
@@ -167,10 +172,10 @@ export const QrScannerModal: React.FC<QrScannerModalProps> = ({
             <QrCode className="w-5 h-5 text-indigo-400" />
             <div>
               <h2 className="text-sm font-black">
-                Android QR स्कैनर / Android QR Scanner
+                {t("QR स्कैनर", "QR Scanner")}
               </h2>
               <p className="text-[11px] text-slate-400">
-                कपड़े के बंडल पर लगा QR स्कैन करें → ऑर्डर स्वतः &apos;READY&apos; होगा
+                {t("कपड़े के बंडल पर लगा QR स्कैन करें → ऑर्डर स्वतः 'READY' होगा", "Scan bundle QR → Order status automatically turns READY")}
               </p>
             </div>
           </div>
@@ -187,11 +192,10 @@ export const QrScannerModal: React.FC<QrScannerModalProps> = ({
           {/* Scan Result Confirmation Card */}
           {scanResult && (
             <div
-              className={`p-4 rounded-xl border text-xs space-y-3 ${
-                scanResult.success
-                  ? "bg-emerald-50 border-emerald-200 text-emerald-900"
-                  : "bg-red-50 border-red-200 text-red-900"
-              }`}
+              className={`p-4 rounded-xl border text-xs space-y-3 ${scanResult.success
+                ? "bg-emerald-50 border-emerald-200 text-emerald-900"
+                : "bg-red-50 border-red-200 text-red-900"
+                }`}
             >
               <div className="flex items-center space-x-2">
                 {scanResult.success ? (
@@ -202,8 +206,8 @@ export const QrScannerModal: React.FC<QrScannerModalProps> = ({
                 <div>
                   <h3 className="font-extrabold text-sm">
                     {scanResult.success
-                      ? "QR स्कैन सफल! ऑर्डर 'तैयार' हुआ"
-                      : "स्कैन परिणाम / Scan Alert"}
+                      ? t("QR स्कैन सफल! ऑर्डर 'तैयार' हुआ", "QR Scan Successful! Order marked READY")
+                      : t("स्कैन चेतावनी", "Scan Alert")}
                   </h3>
                   <p className="text-[11px]">{scanResult.message}</p>
                 </div>
@@ -215,7 +219,7 @@ export const QrScannerModal: React.FC<QrScannerModalProps> = ({
                   <div className="flex items-center justify-between text-emerald-800 font-bold text-[11px]">
                     <span className="flex items-center space-x-1">
                       <Phone className="w-3 h-3 text-emerald-600" />
-                      <span>व्हाट्सएप सूचना भेजी गई / WhatsApp Notification Sent</span>
+                      <span>{t("व्हाट्सएप सूचना भेजी गई", "WhatsApp Notification Sent")}</span>
                     </span>
                     <span className="bg-emerald-100 text-emerald-800 px-1.5 py-0.2 rounded font-mono">
                       +91 {scanResult.customerMobile}
@@ -235,7 +239,7 @@ export const QrScannerModal: React.FC<QrScannerModalProps> = ({
                   }}
                   className="px-3 py-1.5 bg-slate-800 text-white font-bold rounded-lg text-xs hover:bg-slate-900 cursor-pointer"
                 >
-                  पुनः स्कैन करें / Scan Another QR
+                  {t("पुनः स्कैन करें", "Scan Another QR")}
                 </button>
               </div>
             </div>
@@ -247,7 +251,7 @@ export const QrScannerModal: React.FC<QrScannerModalProps> = ({
 
             {!isScanning && !cameraError && (
               <div className="p-4 text-center text-slate-400 text-xs">
-                कैमरा प्रारंभ हो रहा है... / Starting Android camera...
+                {t("कैमरा प्रारंभ हो रहा है...", "Starting camera...")}
               </div>
             )}
 
@@ -263,17 +267,17 @@ export const QrScannerModal: React.FC<QrScannerModalProps> = ({
           <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-2 text-xs">
             <div className="flex items-center justify-between">
               <span className="font-bold text-slate-700">
-                त्वरित टोकन सिम्युलेटर / Simulator Test:
+                {t("टोकन सिम्युलेटर / मैनुअल इनपुट", "Simulator / Manual Token Input:")}
               </span>
               <span className="text-[11px] text-slate-400">
-                (बिना कैमरे के भी टेस्ट करें)
+                ({t("बिना कैमरे के भी टेस्ट करें", "Test without camera")})
               </span>
             </div>
 
             <div className="flex items-center space-x-2">
               <input
                 type="text"
-                placeholder="QR Token या DCQR-xxxx दर्ज करें..."
+                placeholder={t("QR Token या DCQR-xxxx दर्ज करें...", "Enter QR Token or DCQR-xxxx...")}
                 value={manualToken}
                 onChange={(e) => setManualToken(e.target.value)}
                 className="flex-1 px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white font-mono"
@@ -284,7 +288,7 @@ export const QrScannerModal: React.FC<QrScannerModalProps> = ({
                 disabled={!manualToken.trim() || isProcessing}
                 className="px-3.5 py-2 rounded-lg bg-indigo-600 text-white font-bold text-xs hover:bg-indigo-700 transition cursor-pointer disabled:opacity-50 shrink-0"
               >
-                {isProcessing ? "जाँच..." : "स्कैन करें / Test"}
+                {isProcessing ? t("जाँच...", "Checking...") : t("स्कैन करें", "Test / Scan")}
               </button>
             </div>
 
@@ -307,7 +311,7 @@ export const QrScannerModal: React.FC<QrScannerModalProps> = ({
                 }}
                 className="text-[11px] text-indigo-700 font-bold underline cursor-pointer hover:text-indigo-900"
               >
-                ⚡ नमूना ऑर्डर DC-2026-00102 का QR टोकन स्वतः भरें और टेस्ट करें
+                ⚡ {t("नमूना ऑर्डर का QR टोकन स्वतः भरें और टेस्ट करें", "Auto-fill sample order QR token and test")}
               </button>
             </div>
           </div>
@@ -317,7 +321,7 @@ export const QrScannerModal: React.FC<QrScannerModalProps> = ({
               onClick={onClose}
               className="text-xs font-semibold text-slate-500 hover:text-slate-800 cursor-pointer"
             >
-              बंद करें / Close Scanner
+              {t("बंद करें", "Close Scanner")}
             </button>
           </div>
         </div>

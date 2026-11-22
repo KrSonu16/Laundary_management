@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { CustomerDto } from "@/lib/types";
+import { useLanguage } from "@/lib/LanguageContext";
 import {
   Search,
   UserPlus,
@@ -24,6 +25,7 @@ export const CustomerSearchView: React.FC<CustomerSearchViewProps> = ({
   onStartOrderForCustomer,
   onSelectOrder,
 }) => {
+  const { t } = useLanguage();
   const [query, setQuery] = useState("");
   const [customers, setCustomers] = useState<(CustomerDto & {
     totalOrdersCount?: number;
@@ -88,7 +90,7 @@ export const CustomerSearchView: React.FC<CustomerSearchViewProps> = ({
 
       const data = await res.json();
       if (!res.ok) {
-        setFormError(data.error || "Failed to create customer");
+        setFormError(data.error || t("ग्राहक जोड़ने में विफल", "Failed to create customer"));
         return;
       }
 
@@ -99,7 +101,7 @@ export const CustomerSearchView: React.FC<CustomerSearchViewProps> = ({
       setMobile("");
       setAddress("");
     } catch (err: unknown) {
-      setFormError(err instanceof Error ? err.message : "Error registering customer");
+      setFormError(err instanceof Error ? err.message : t("ग्राहक जोड़ने में त्रुटि", "Error registering customer"));
     }
   };
 
@@ -110,10 +112,13 @@ export const CustomerSearchView: React.FC<CustomerSearchViewProps> = ({
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
           <div>
             <h2 className="text-base sm:text-lg font-black text-slate-900">
-              स्मार्ट ग्राहक खोज / Smart Customer Search
+              {t("स्मार्ट ग्राहक खोज", "Smart Customer Search")}
             </h2>
             <p className="text-xs text-slate-500">
-              ग्राहक का मोबाइल नंबर या नाम दर्ज करें। पुराना रिकॉर्ड व सक्रिय ऑर्डर तुरंत दिखाई देंगे।
+              {t(
+                "ग्राहक का मोबाइल नंबर या नाम दर्ज करें। पुराना रिकॉर्ड व सक्रिय ऑर्डर तुरंत दिखाई देंगे।",
+                "Enter customer mobile or name. Past records and active orders will appear instantly."
+              )}
             </p>
           </div>
 
@@ -122,7 +127,7 @@ export const CustomerSearchView: React.FC<CustomerSearchViewProps> = ({
             className="flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-blue-600 text-white font-bold text-xs hover:bg-blue-700 transition cursor-pointer self-start sm:self-auto"
           >
             <UserPlus className="w-4 h-4" />
-            <span>+ नया ग्राहक / New Customer</span>
+            <span>+ {t("नया ग्राहक", "New Customer")}</span>
           </button>
         </div>
 
@@ -130,7 +135,10 @@ export const CustomerSearchView: React.FC<CustomerSearchViewProps> = ({
         <div className="relative">
           <input
             type="text"
-            placeholder="मोबाइल नंबर या नाम से खोजें (उदा. 9876543210 या राहुल)..."
+            placeholder={t(
+              "मोबाइल नंबर या नाम से खोजें (उदा. 9876543210 या राहुल)...",
+              "Search by mobile number or name (e.g. 9876543210 or Rahul)..."
+            )}
             value={query}
             onChange={(e) => handleSearch(e.target.value)}
             className="w-full pl-11 pr-4 py-3 rounded-xl border border-slate-300 text-sm font-semibold text-slate-900 focus:outline-hidden focus:ring-2 focus:ring-blue-500 bg-slate-50 focus:bg-white transition"
@@ -144,7 +152,7 @@ export const CustomerSearchView: React.FC<CustomerSearchViewProps> = ({
         <div className="bg-white rounded-2xl p-5 border border-blue-200 shadow-sm space-y-4">
           <h3 className="text-sm font-bold text-blue-900 flex items-center space-x-1.5">
             <UserPlus className="w-4 h-4 text-blue-600" />
-            <span>नया ग्राहक पंजीकरण / Register New Customer</span>
+            <span>{t("नया ग्राहक पंजीकरण", "Register New Customer")}</span>
           </h3>
 
           {formError && (
@@ -156,12 +164,12 @@ export const CustomerSearchView: React.FC<CustomerSearchViewProps> = ({
           <form onSubmit={handleCreateCustomer} className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-bold text-slate-700 mb-1">
-                पूरा नाम / Full Name *
+                {t("पूरा नाम", "Full Name")} *
               </label>
               <input
                 type="text"
                 required
-                placeholder="उदा. राहुल कुमार"
+                placeholder={t("उदा. राहुल कुमार", "e.g. Rahul Kumar")}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 className="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs"
@@ -170,7 +178,7 @@ export const CustomerSearchView: React.FC<CustomerSearchViewProps> = ({
 
             <div>
               <label className="block text-xs font-bold text-slate-700 mb-1">
-                10 अंकों का मोबाइल नंबर / Mobile *
+                {t("10 अंकों का मोबाइल नंबर", "10-Digit Mobile")} *
               </label>
               <input
                 type="tel"
@@ -185,12 +193,12 @@ export const CustomerSearchView: React.FC<CustomerSearchViewProps> = ({
 
             <div>
               <label className="block text-xs font-bold text-slate-700 mb-1">
-                वैकल्पिक मोबाइल / Alternate Mobile
+                {t("वैकल्पिक मोबाइल", "Alternate Mobile")}
               </label>
               <input
                 type="tel"
                 maxLength={10}
-                placeholder="वैकल्पिक नंबर"
+                placeholder={t("वैकल्पिक नंबर", "Alternate number")}
                 value={alternateMobile}
                 onChange={(e) => setAlternateMobile(e.target.value.replace(/\D/g, ""))}
                 className="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs font-mono"
@@ -199,11 +207,11 @@ export const CustomerSearchView: React.FC<CustomerSearchViewProps> = ({
 
             <div>
               <label className="block text-xs font-bold text-slate-700 mb-1">
-                पता / Address
+                {t("पता", "Address")}
               </label>
               <input
                 type="text"
-                placeholder="हाउस नंबर, सेक्टर, शहर"
+                placeholder={t("हाउस नंबर, सेक्टर, शहर", "House No., Sector, City")}
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
                 className="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs"
@@ -216,13 +224,13 @@ export const CustomerSearchView: React.FC<CustomerSearchViewProps> = ({
                 onClick={() => setShowNewForm(false)}
                 className="px-4 py-2 rounded-lg border border-slate-300 text-xs font-semibold text-slate-600 hover:bg-slate-100 cursor-pointer"
               >
-                रद्द करें / Cancel
+                {t("रद्द करें", "Cancel")}
               </button>
               <button
                 type="submit"
                 className="px-5 py-2 rounded-lg bg-blue-600 text-white text-xs font-bold hover:bg-blue-700 transition cursor-pointer"
               >
-                ग्राहक सुरक्षित करें / Save Customer
+                {t("ग्राहक सुरक्षित करें", "Save Customer")}
               </button>
             </div>
           </form>
@@ -233,7 +241,7 @@ export const CustomerSearchView: React.FC<CustomerSearchViewProps> = ({
       <div className="space-y-4">
         {isLoading ? (
           <div className="p-8 text-center text-xs text-slate-500 bg-white rounded-2xl border border-slate-200">
-            खोज जारी है... / Searching...
+            {t("खोज जारी है...", "Searching...")}
           </div>
         ) : customers.length > 0 ? (
           <div className="grid grid-cols-1 gap-4">
@@ -269,7 +277,7 @@ export const CustomerSearchView: React.FC<CustomerSearchViewProps> = ({
                     className="flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-blue-600 text-white font-bold text-xs hover:bg-blue-700 transition cursor-pointer active:scale-95 shadow-xs self-start sm:self-auto"
                   >
                     <PlusCircle className="w-4 h-4" />
-                    <span>नया ऑर्डर बनाएँ / New Order</span>
+                    <span>{t("नया ऑर्डर बनाएँ", "New Order")}</span>
                   </button>
                 </div>
 
@@ -277,7 +285,7 @@ export const CustomerSearchView: React.FC<CustomerSearchViewProps> = ({
                 {cust.recentOrders && cust.recentOrders.length > 0 && (
                   <div className="pt-3 border-t border-slate-100">
                     <p className="text-xs font-bold text-slate-500 uppercase mb-2">
-                      ग्राहक के हाल के ऑर्डर / Recent Orders ({cust.recentOrders.length}):
+                      {t(`ग्राहक के हाल के ऑर्डर (${cust.recentOrders.length}):`, `Recent Orders (${cust.recentOrders.length}):`)}
                     </p>
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
                       {cust.recentOrders.map((ord) => (
@@ -289,7 +297,7 @@ export const CustomerSearchView: React.FC<CustomerSearchViewProps> = ({
                           <div>
                             <span className="font-bold text-slate-900">{ord.orderNumber}</span>
                             <p className="text-[11px] text-slate-500">
-                              {ord.expectedQuantity} कपड़े • {ord.status}
+                              {ord.expectedQuantity} {t("कपड़े", "pcs")} • {ord.status}
                             </p>
                           </div>
                           <ArrowRight className="w-3.5 h-3.5 text-slate-400" />
@@ -303,7 +311,7 @@ export const CustomerSearchView: React.FC<CustomerSearchViewProps> = ({
           </div>
         ) : hasSearched ? (
           <div className="p-8 text-center text-xs text-slate-500 bg-white rounded-2xl border border-slate-200 space-y-2">
-            <p>कोई ग्राहक नहीं मिला / No customers found matching &quot;{query}&quot;</p>
+            <p>{t(`कोई ग्राहक नहीं मिला "${query}"`, `No customers found matching "${query}"`)}</p>
             <button
               onClick={() => {
                 setShowNewForm(true);
@@ -311,12 +319,12 @@ export const CustomerSearchView: React.FC<CustomerSearchViewProps> = ({
               }}
               className="px-4 py-2 bg-blue-600 text-white rounded-lg text-xs font-bold hover:bg-blue-700 transition cursor-pointer"
             >
-              + नया ग्राहक पंजीकृत करें / Register New Customer
+              + {t("नया ग्राहक पंजीकृत करें", "Register New Customer")}
             </button>
           </div>
         ) : (
           <div className="p-8 text-center text-xs text-slate-400 bg-white rounded-2xl border border-slate-200">
-            ऊपर मोबाइल नंबर लिखकर ग्राहक खोजें / Type mobile number above to search customer records
+            {t("ऊपर मोबाइल नंबर लिखकर ग्राहक खोजें", "Type mobile number or name above to search customer records")}
           </div>
         )}
       </div>

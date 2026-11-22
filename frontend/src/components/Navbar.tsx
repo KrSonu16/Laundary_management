@@ -3,6 +3,7 @@
 import type { StaffUserDto } from "@/lib/types";
 import { Bell, Check, ChevronDown, ClipboardList, Globe, LogOut, Plus, QrCode, Search, Settings, Waves } from "lucide-react";
 import { useLanguage, Language } from "@/lib/LanguageContext";
+import { useShop } from "@/lib/ShopContext";
 
 interface NavbarProps {
   currentUser: StaffUserDto | null;
@@ -34,6 +35,7 @@ export function Navbar({
   alertsCount = 0,
 }: NavbarProps) {
   const { language, setLanguage, t } = useLanguage();
+  const { shopName, shopTagline } = useShop();
 
   const navItems = [
     { id: "dashboard", label: t("डैशबोर्ड", "Overview"), icon: Waves },
@@ -53,8 +55,8 @@ export function Navbar({
           <button className="flex min-w-0 items-center gap-3 rounded-xl text-left focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sea" onClick={() => setActiveTab("dashboard")} type="button">
             <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-ink text-sea-soft"><Waves aria-hidden="true" className="size-5" /></span>
             <span className="min-w-0">
-              <span className="block truncate text-sm font-semibold tracking-tight text-ink">DC Laundry</span>
-              <span className="hidden text-[11px] text-ink-muted sm:block">Shop operations</span>
+              <span className="block truncate text-sm font-semibold tracking-tight text-ink">{shopName}</span>
+              <span className="hidden text-[11px] text-ink-muted sm:block">{shopTagline}</span>
             </span>
           </button>
 
@@ -64,11 +66,10 @@ export function Navbar({
               <button
                 type="button"
                 onClick={() => setLanguage("hi")}
-                className={`rounded-lg px-2 py-1 transition cursor-pointer ${
-                  language === "hi"
-                    ? "bg-sea text-white shadow-xs font-bold"
-                    : "text-ink-muted hover:text-ink"
-                }`}
+                className={`rounded-lg px-2 py-1 transition cursor-pointer ${language === "hi"
+                  ? "bg-sea text-white shadow-xs font-bold"
+                  : "text-ink-muted hover:text-ink"
+                  }`}
                 title="केवल हिंदी (Hindi Only)"
               >
                 हिंदी
@@ -76,11 +77,10 @@ export function Navbar({
               <button
                 type="button"
                 onClick={() => setLanguage("bilingual")}
-                className={`rounded-lg px-2 py-1 transition cursor-pointer ${
-                  language === "bilingual"
-                    ? "bg-sea text-white shadow-xs font-bold"
-                    : "text-ink-muted hover:text-ink"
-                }`}
+                className={`rounded-lg px-2 py-1 transition cursor-pointer ${language === "bilingual"
+                  ? "bg-sea text-white shadow-xs font-bold"
+                  : "text-ink-muted hover:text-ink"
+                  }`}
                 title="हिंदी + English (Bilingual)"
               >
                 हिं/En
@@ -88,11 +88,10 @@ export function Navbar({
               <button
                 type="button"
                 onClick={() => setLanguage("en")}
-                className={`rounded-lg px-2 py-1 transition cursor-pointer ${
-                  language === "en"
-                    ? "bg-sea text-white shadow-xs font-bold"
-                    : "text-ink-muted hover:text-ink"
-                }`}
+                className={`rounded-lg px-2 py-1 transition cursor-pointer ${language === "en"
+                  ? "bg-sea text-white shadow-xs font-bold"
+                  : "text-ink-muted hover:text-ink"
+                  }`}
                 title="English Only"
               >
                 EN

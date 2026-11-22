@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { OrderDto } from "@/lib/types";
+import { useLanguage } from "@/lib/LanguageContext";
 import {
   X,
   Truck,
@@ -23,6 +24,7 @@ export const DeliveryHandoverModal: React.FC<DeliveryHandoverModalProps> = ({
   onClose,
   onDeliveryConfirmed,
 }) => {
+  const { t } = useLanguage();
   const [confirmed, setConfirmed] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -31,7 +33,7 @@ export const DeliveryHandoverModal: React.FC<DeliveryHandoverModalProps> = ({
 
   const handleDeliver = async () => {
     if (!confirmed) {
-      setErrorMessage("Please confirm physical handover of garments to the customer.");
+      setErrorMessage(t("कृपया ग्राहक को कपड़े सौंपने की पुष्टि करें।", "Please confirm physical handover of garments to the customer."));
       return;
     }
 
@@ -47,7 +49,7 @@ export const DeliveryHandoverModal: React.FC<DeliveryHandoverModalProps> = ({
 
       const data = await res.json();
       if (!res.ok) {
-        setErrorMessage(data.error || "Failed to mark order as delivered");
+        setErrorMessage(data.error || t("ऑर्डर डिलीवर चिह्नित करने में विफल", "Failed to mark order as delivered"));
         setIsSubmitting(false);
         return;
       }
@@ -55,7 +57,7 @@ export const DeliveryHandoverModal: React.FC<DeliveryHandoverModalProps> = ({
       onDeliveryConfirmed(order.id);
       onClose();
     } catch (err: unknown) {
-      setErrorMessage(err instanceof Error ? err.message : "Network error");
+      setErrorMessage(err instanceof Error ? err.message : t("नेटवर्क त्रुटि", "Network error"));
       setIsSubmitting(false);
     }
   };
@@ -70,10 +72,10 @@ export const DeliveryHandoverModal: React.FC<DeliveryHandoverModalProps> = ({
             </div>
             <div>
               <h2 className="text-base font-black text-slate-900">
-                कपड़े सुपुर्दगी / Garment Handover
+                {t("कपड़े सुपुर्दगी", "Garment Handover")}
               </h2>
               <p className="text-xs text-slate-500">
-                ऑर्डर: <strong className="text-slate-800">{order.orderNumber}</strong> ({order.customerName})
+                {t("ऑर्डर", "Order")}: <strong className="text-slate-800">{order.orderNumber}</strong> ({order.customerName})
               </p>
             </div>
           </div>
@@ -95,24 +97,26 @@ export const DeliveryHandoverModal: React.FC<DeliveryHandoverModalProps> = ({
 
           <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-2">
             <div className="flex justify-between">
-              <span className="text-slate-500">ग्राहक / Customer:</span>
+              <span className="text-slate-500">{t("ग्राहक", "Customer")}:</span>
               <strong className="text-slate-900">{order.customerName}</strong>
             </div>
             <div className="flex justify-between">
-              <span className="text-slate-500">मोबाइल / Mobile:</span>
+              <span className="text-slate-500">{t("मोबाइल", "Mobile")}:</span>
               <strong className="text-slate-900 font-mono">{order.customerMobile}</strong>
             </div>
             <div className="flex justify-between">
-              <span className="text-slate-500">कुल कपड़े / Total Garments:</span>
+              <span className="text-slate-500">{t("कुल कपड़े", "Total Garments")}:</span>
               <strong className="text-emerald-800 text-sm font-black font-mono">
-                {order.expectedQuantity} कपड़े / Pcs
+                {order.expectedQuantity} {t("कपड़े", "Pcs")}
               </strong>
             </div>
           </div>
 
           <p className="text-slate-600 text-[11px] leading-relaxed">
-            दुकानदार द्वारा कपड़े ग्राहक को भौतिक रूप से सौंपने के बाद ही &apos;डिलीवर&apos; चिह्नित करें।
-            डिलीवर होने के बाद ऑर्डर स्वतः बंद हो जाएगा और इसकी समय-मुहर रिकॉर्ड होगी।
+            {t(
+              "दुकानदार द्वारा कपड़े ग्राहक को भौतिक रूप से सौंपने के बाद ही 'डिलीवर' चिह्नित करें। डिलीवर होने के बाद ऑर्डर स्वतः बंद हो जाएगा।",
+              "Mark 'Deliver' only after physically handing over all garments to the customer. Once delivered, the order workflow will be archived with timestamps."
+            )}
           </p>
 
           <div className="p-3 bg-emerald-50/70 border border-emerald-200 rounded-xl">
@@ -124,11 +128,10 @@ export const DeliveryHandoverModal: React.FC<DeliveryHandoverModalProps> = ({
                 className="w-4 h-4 mt-0.5 rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer"
               />
               <span className="text-xs font-semibold text-slate-800 leading-snug">
-                &quot;मैंने ग्राहक को सभी {order.expectedQuantity} कपड़े भौतिक रूप से सौंप दिए हैं।&quot;
-                <br />
-                <span className="text-[11px] text-slate-500 font-normal">
-                  (I have physically verified and handed over all garments to the customer.)
-                </span>
+                {t(
+                  `"मैंने ग्राहक को सभी ${order.expectedQuantity} कपड़े भौतिक रूप से सौंप दिए हैं।"`,
+                  `"I have physically verified and handed over all ${order.expectedQuantity} garments to the customer."`
+                )}
               </span>
             </label>
           </div>
@@ -139,7 +142,7 @@ export const DeliveryHandoverModal: React.FC<DeliveryHandoverModalProps> = ({
               onClick={onClose}
               className="text-xs font-semibold text-slate-500 hover:text-slate-800 cursor-pointer"
             >
-              रद्द करें / Cancel
+              {t("रद्द करें", "Cancel")}
             </button>
 
             <button
@@ -149,7 +152,7 @@ export const DeliveryHandoverModal: React.FC<DeliveryHandoverModalProps> = ({
               className="px-5 py-2.5 rounded-xl bg-emerald-600 text-white font-bold text-xs hover:bg-emerald-700 transition cursor-pointer shadow-xs disabled:opacity-50 flex items-center space-x-1.5"
             >
               <CheckCircle2 className="w-4 h-4" />
-              <span>{isSubmitting ? "सुरक्षित हो रहा है..." : "✓ डिलीवर चिह्नित करें / Confirm Delivery"}</span>
+              <span>{isSubmitting ? t("सुरक्षित हो रहा है...", "Saving...") : t("✓ डिलीवर चिह्नित करें", "✓ Confirm Delivery")}</span>
             </button>
           </div>
         </div>

@@ -4,12 +4,17 @@ import { useState } from "react";
 import type { FormEvent } from "react";
 import { ArrowRight, Eye, EyeOff, LockKeyhole, ShieldCheck, Waves } from "lucide-react";
 import type { StaffUserDto } from "@/lib/types";
+import { useLanguage } from "@/lib/LanguageContext";
+import { useShop } from "@/lib/ShopContext";
 
 interface LoginModalProps {
   onLoginSuccess: (user: StaffUserDto) => void;
 }
 
 export function LoginModal({ onLoginSuccess }: LoginModalProps) {
+  const { language, setLanguage, t } = useLanguage();
+  const { shopName, shopTagline } = useShop();
+
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -34,15 +39,15 @@ export function LoginModal({ onLoginSuccess }: LoginModalProps) {
       if (!response.ok || !result?.user) {
         setErrorMessage(
           response.status >= 500
-            ? "Sign-in is temporarily unavailable. Please try again shortly."
-            : "The account details could not be verified. Check them and try again."
+            ? t("लॉगिन सेवा अस्थायी रूप से अनुपलब्ध है। कृपया थोड़ी देर बाद पुनः प्रयास करें।", "Sign-in is temporarily unavailable. Please try again shortly.")
+            : t("खाता विवरण सत्यापित नहीं हो सका। कृपया जांचें और पुनः प्रयास करें।", "The account details could not be verified. Check them and try again.")
         );
         return;
       }
 
       onLoginSuccess(result.user);
     } catch {
-      setErrorMessage("We could not reach the service. Check your connection and try again.");
+      setErrorMessage(t("सर्वर से संपर्क नहीं हो सका। अपना इंटरनेट जांचें।", "We could not reach the service. Check your connection and try again."));
     } finally {
       setIsSubmitting(false);
     }
@@ -59,47 +64,96 @@ export function LoginModal({ onLoginSuccess }: LoginModalProps) {
             <div className="absolute bottom-12 right-12 size-24 rounded-full bg-sun/20 blur-2xl" />
           </div>
 
-          <div className="flex items-center gap-3">
-            <div className="grid size-11 place-items-center rounded-2xl bg-sea text-white shadow-lg shadow-black/15">
-              <Waves aria-hidden="true" className="size-5" />
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <div className="grid size-11 place-items-center rounded-2xl bg-sea text-white shadow-lg shadow-black/15">
+                <Waves aria-hidden="true" className="size-5" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold tracking-wide">{shopName}</p>
+                <p className="text-xs text-white/60">{shopTagline}</p>
+              </div>
             </div>
-            <div>
-              <p className="text-sm font-semibold tracking-wide">DC Laundry</p>
-              <p className="text-xs text-white/60">Operations workspace</p>
+
+            {/* Language Switcher in Login */}
+            <div className="flex items-center rounded-xl border border-white/20 bg-white/10 p-0.5 text-xs font-semibold">
+              <button
+                type="button"
+                onClick={() => setLanguage("hi")}
+                className={`rounded-lg px-2 py-1 transition cursor-pointer ${language === "hi" ? "bg-sea text-white font-bold" : "text-white/70 hover:text-white"
+                  }`}
+              >
+                हिंदी
+              </button>
+              <button
+                type="button"
+                onClick={() => setLanguage("bilingual")}
+                className={`rounded-lg px-2 py-1 transition cursor-pointer ${language === "bilingual" ? "bg-sea text-white font-bold" : "text-white/70 hover:text-white"
+                  }`}
+              >
+                हिं/En
+              </button>
+              <button
+                type="button"
+                onClick={() => setLanguage("en")}
+                className={`rounded-lg px-2 py-1 transition cursor-pointer ${language === "en" ? "bg-sea text-white font-bold" : "text-white/70 hover:text-white"
+                  }`}
+              >
+                EN
+              </button>
             </div>
           </div>
 
           <div className="relative max-w-lg py-4 sm:py-10 md:py-6 lg:py-10">
             <p className="mb-3 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-medium text-white/75 sm:mb-5">
               <span className="size-1.5 rounded-full bg-sun" />
-              One calm place for every order
+              {t("हर ऑर्डर का सटीक हिसाब", "One calm place for every order")}
             </p>
             <h1 className="text-balance text-2xl font-semibold leading-[1.08] tracking-[-0.045em] sm:text-5xl md:text-4xl lg:text-[3.4rem]">
-              Keep the day moving.
-              <span className="mt-2 block text-sea-soft">Keep every garment accounted for.</span>
+              {t("काम सुचारू रूप से चले।", "Keep the day moving.")}
+              <span className="mt-2 block text-sea-soft">
+                {t("हर कपड़े की जिम्मेदारी और सुरक्षा।", "Keep every garment accounted for.")}
+              </span>
             </h1>
             <p className="mt-4 hidden max-w-md text-sm leading-6 text-white/65 sm:mt-6 sm:block sm:text-base sm:leading-7">
-              Track orders from intake to handover, verify garment counts, and keep your team aligned from one secure workspace.
+              {t(
+                "ऑर्डर लेने से लेकर डिलीवरी तक, कपड़ों की सही गिनती और पूरी टीम का समन्वय एक ही सुरक्षित सिस्टम से।",
+                "Track orders from intake to handover, verify garment counts, and keep your team aligned from one secure workspace."
+              )}
             </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-x-6 gap-y-3 border-t border-white/10 pt-5 text-xs text-white/60">
-            <span className="inline-flex items-center gap-2"><ShieldCheck aria-hidden="true" className="size-4 text-sea-soft" /> Staff-only access</span>
-            <span className="inline-flex items-center gap-2"><LockKeyhole aria-hidden="true" className="size-4 text-sea-soft" /> Secure sessions</span>
+            <span className="inline-flex items-center gap-2">
+              <ShieldCheck aria-hidden="true" className="size-4 text-sea-soft" />
+              {t("केवल अधिकृत स्टाफ प्रवेश", "Staff-only access")}
+            </span>
+            <span className="inline-flex items-center gap-2">
+              <LockKeyhole aria-hidden="true" className="size-4 text-sea-soft" />
+              {t("सुरक्षित सत्र", "Secure sessions")}
+            </span>
           </div>
         </section>
 
         <section className="flex items-center justify-center px-5 py-7 sm:px-10 md:px-8 md:py-6 lg:px-14">
           <div className="w-full max-w-md">
             <div className="mb-6 sm:mb-9">
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-sea">Welcome back</p>
-              <h2 className="mt-3 text-3xl font-semibold tracking-[-0.04em] text-ink sm:text-4xl">Sign in to your workspace</h2>
-              <p className="mt-3 text-sm leading-6 text-ink-muted">Use the staff account created for your shop.</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-sea">
+                {t("स्वागत है", "Welcome back")}
+              </p>
+              <h2 className="mt-3 text-3xl font-semibold tracking-[-0.04em] text-ink sm:text-4xl">
+                {t("वर्कस्पेस में लॉगिन करें", "Sign in to your workspace")}
+              </h2>
+              <p className="mt-3 text-sm leading-6 text-ink-muted">
+                {t("अपनी दुकान के लिए बनाए गए स्टाफ खाते से लॉगिन करें।", "Use the staff account created for your shop.")}
+              </p>
             </div>
 
             <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
               <div className="flex flex-col gap-2">
-                <label className="text-sm font-medium text-ink" htmlFor="staff-identifier">Email or mobile number</label>
+                <label className="text-sm font-medium text-ink" htmlFor="staff-identifier">
+                  {t("ईमेल या मोबाइल नंबर", "Email or mobile number")}
+                </label>
                 <input
                   autoComplete="username"
                   className="h-12 rounded-xl border border-line bg-white px-4 text-sm text-ink outline-none transition placeholder:text-ink-muted/60 focus:border-sea focus:ring-4 focus:ring-sea/10"
@@ -107,7 +161,7 @@ export function LoginModal({ onLoginSuccess }: LoginModalProps) {
                   maxLength={254}
                   name="identifier"
                   onChange={(event) => setIdentifier(event.target.value)}
-                  placeholder="name@shop.com or mobile number"
+                  placeholder={t("ईमेल या मोबाइल नंबर दर्ज करें", "name@shop.com or mobile number")}
                   required
                   value={identifier}
                 />
@@ -115,8 +169,12 @@ export function LoginModal({ onLoginSuccess }: LoginModalProps) {
 
               <div className="flex flex-col gap-2">
                 <div className="flex items-center justify-between gap-3">
-                  <label className="text-sm font-medium text-ink" htmlFor="staff-password">Password</label>
-                  <span className="text-xs text-ink-muted">Contact your administrator if needed</span>
+                  <label className="text-sm font-medium text-ink" htmlFor="staff-password">
+                    {t("पासवर्ड", "Password")}
+                  </label>
+                  <span className="text-xs text-ink-muted">
+                    {t("मालिक या व्यवस्थापक से संपर्क करें", "Contact your administrator if needed")}
+                  </span>
                 </div>
                 <div className="relative">
                   <input
@@ -126,7 +184,7 @@ export function LoginModal({ onLoginSuccess }: LoginModalProps) {
                     maxLength={512}
                     name="password"
                     onChange={(event) => setPassword(event.target.value)}
-                    placeholder="Enter your password"
+                    placeholder={t("अपना पासवर्ड दर्ज करें", "Enter your password")}
                     required
                     type={showPassword ? "text" : "password"}
                     value={password}
@@ -149,17 +207,20 @@ export function LoginModal({ onLoginSuccess }: LoginModalProps) {
               )}
 
               <button
-                className="mt-1 inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-sea px-5 text-sm font-semibold text-white shadow-sm transition hover:bg-sea-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sea disabled:cursor-not-allowed disabled:opacity-60"
+                className="mt-1 inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-sea px-5 text-sm font-semibold text-white shadow-sm transition hover:bg-sea-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sea disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
                 disabled={isSubmitting || !identifier.trim() || !password}
                 type="submit"
               >
-                {isSubmitting ? "Signing in…" : "Sign in securely"}
+                {isSubmitting ? t("लॉगिन हो रहा है…", "Signing in…") : t("सुरक्षित लॉगिन करें", "Sign in securely")}
                 {!isSubmitting && <ArrowRight aria-hidden="true" className="size-4" />}
               </button>
             </form>
 
             <p className="mt-8 border-t border-line pt-5 text-xs leading-5 text-ink-muted">
-              Access is limited to authorised staff. Sessions are protected with server-side expiry; sign out at any time.
+              {t(
+                "पहुंच केवल अधिकृत स्टाफ तक सीमित है। सत्र सर्वर-साइड समाप्ति के साथ सुरक्षित हैं।",
+                "Access is limited to authorised staff. Sessions are protected with server-side expiry; sign out at any time."
+              )}
             </p>
           </div>
         </section>

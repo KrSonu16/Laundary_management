@@ -3,6 +3,7 @@
 import { useState } from "react";
 import useSWR from "swr";
 import type { CustomerDto, DashboardSummary, OrderDto, StaffUserDto } from "@/lib/types";
+import { useLanguage } from "@/lib/LanguageContext";
 import { Navbar } from "@/components/Navbar";
 import { DashboardView } from "@/components/DashboardView";
 import { OrdersListView } from "@/components/OrdersListView";
@@ -60,6 +61,7 @@ async function fetchDashboard(): Promise<DashboardPayload> {
 }
 
 export default function Home() {
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState("dashboard");
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [isNewOrderOpen, setIsNewOrderOpen] = useState(false);
@@ -136,7 +138,7 @@ export default function Home() {
       <main aria-busy="true" className="grid min-h-screen place-items-center bg-linen px-5">
         <div className="flex items-center gap-3 rounded-2xl border border-line bg-white px-5 py-4 shadow-sm">
           <span aria-hidden="true" className="size-5 animate-spin rounded-full border-2 border-sea/20 border-t-sea motion-reduce:animate-none" />
-          <p className="text-sm font-medium text-ink">Opening your workspace…</p>
+          <p className="text-sm font-medium text-ink">{t("वर्कस्पेस खुल रहा है…", "Opening your workspace…")}</p>
         </div>
       </main>
     );

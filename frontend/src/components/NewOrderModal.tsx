@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import { CustomerDto, GarmentTypeDto, OcrExtractionResult } from "@/lib/types";
+import { useLanguage } from "@/lib/LanguageContext";
+import { useShop } from "@/lib/ShopContext";
 import {
   X,
   Camera,
@@ -33,6 +35,8 @@ export const NewOrderModal: React.FC<NewOrderModalProps> = ({
   onOrderCreated,
   preselectedCustomer,
 }) => {
+  const { t } = useLanguage();
+  const { shopName } = useShop();
   // Wizard steps: 1: Customer, 2: Slip & OCR, 3: Garments & Delivery, 4: Review
   const [step, setStep] = useState<number>(1);
 
@@ -341,14 +345,14 @@ export const NewOrderModal: React.FC<NewOrderModalProps> = ({
               </span>
               <div>
                 <h2 className="text-base sm:text-lg font-black text-slate-900">
-                  नया लॉन्ड्री ऑर्डर / New Laundry Order
+                  {t("नया लॉन्ड्री ऑर्डर", "New Laundry Order")}
                 </h2>
                 <p className="text-xs text-slate-500">
-                  चरण {step} / 4:{" "}
-                  {step === 1 && "ग्राहक पहचान / Customer Identification"}
-                  {step === 2 && "रसीद फोटो व OCR / Slip Photography & OCR"}
-                  {step === 3 && "कपड़ों की संख्या व डिलीवरी / Garments & Delivery Date"}
-                  {step === 4 && "समीक्षा और ऑर्डर सुरक्षित / Review & Save Order"}
+                  {t(`चरण ${step} / 4:`, `Step ${step} / 4:`)}{" "}
+                  {step === 1 && t("ग्राहक पहचान", "Customer Identification")}
+                  {step === 2 && t("रसीद फोटो व OCR", "Slip Photography & OCR")}
+                  {step === 3 && t("कपड़ों की संख्या व डिलीवरी", "Garments & Delivery Date")}
+                  {step === 4 && t("समीक्षा और ऑर्डर सुरक्षित", "Review & Save Order")}
                 </p>
               </div>
             </div>
@@ -366,38 +370,34 @@ export const NewOrderModal: React.FC<NewOrderModalProps> = ({
         <div className="grid grid-cols-4 bg-slate-100 border-b border-slate-200 text-xs text-center font-semibold">
           <button
             onClick={() => setStep(1)}
-            className={`py-2 border-r border-slate-200 cursor-pointer ${
-              step === 1 ? "bg-blue-600 text-white" : step > 1 ? "bg-blue-50 text-blue-800" : "text-slate-500"
-            }`}
+            className={`py-2 border-r border-slate-200 cursor-pointer ${step === 1 ? "bg-blue-600 text-white" : step > 1 ? "bg-blue-50 text-blue-800" : "text-slate-500"
+              }`}
           >
-            1. ग्राहक / Customer
+            {t("1. ग्राहक", "1. Customer")}
           </button>
           <button
             onClick={() => selectedCustomer && setStep(2)}
             disabled={!selectedCustomer}
-            className={`py-2 border-r border-slate-200 cursor-pointer ${
-              step === 2 ? "bg-blue-600 text-white" : step > 2 ? "bg-blue-50 text-blue-800" : "text-slate-400"
-            }`}
+            className={`py-2 border-r border-slate-200 cursor-pointer ${step === 2 ? "bg-blue-600 text-white" : step > 2 ? "bg-blue-50 text-blue-800" : "text-slate-400"
+              }`}
           >
-            2. रसीद / Slip OCR
+            {t("2. रसीद OCR", "2. Slip OCR")}
           </button>
           <button
             onClick={() => selectedCustomer && setStep(3)}
             disabled={!selectedCustomer}
-            className={`py-2 border-r border-slate-200 cursor-pointer ${
-              step === 3 ? "bg-blue-600 text-white" : step > 3 ? "bg-blue-50 text-blue-800" : "text-slate-400"
-            }`}
+            className={`py-2 border-r border-slate-200 cursor-pointer ${step === 3 ? "bg-blue-600 text-white" : step > 3 ? "bg-blue-50 text-blue-800" : "text-slate-400"
+              }`}
           >
-            3. कपड़े / Garments
+            {t("3. कपड़े", "3. Garments")}
           </button>
           <button
             onClick={() => selectedCustomer && selectedGarments.length > 0 && setStep(4)}
             disabled={!selectedCustomer || selectedGarments.length === 0}
-            className={`py-2 cursor-pointer ${
-              step === 4 ? "bg-blue-600 text-white" : "text-slate-400"
-            }`}
+            className={`py-2 cursor-pointer ${step === 4 ? "bg-blue-600 text-white" : "text-slate-400"
+              }`}
           >
-            4. समीक्षा / Review
+            {t("4. समीक्षा", "4. Review")}
           </button>
         </div>
 
@@ -421,13 +421,13 @@ export const NewOrderModal: React.FC<NewOrderModalProps> = ({
             <div className="space-y-4">
               <div className="bg-blue-50/70 p-4 rounded-xl border border-blue-100">
                 <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                  ग्राहक का मोबाइल नंबर दर्ज करें / Enter Customer Mobile Number:
+                  {t("ग्राहक का मोबाइल नंबर दर्ज करें", "Enter Customer Mobile Number")}:
                 </label>
                 <div className="relative">
                   <input
                     type="tel"
                     autoFocus
-                    placeholder="उदा. 9876543210 (Exact or partial mobile / Name)"
+                    placeholder={t("उदा. 9876543210 या नाम से खोजें...", "e.g. 9876543210 or name...")}
                     value={mobileQuery}
                     onChange={(e) => handleSearchCustomer(e.target.value)}
                     className="w-full pl-10 pr-4 py-3 rounded-xl border border-blue-300 bg-white text-base font-semibold text-slate-900 focus:outline-hidden focus:ring-2 focus:ring-blue-500 shadow-xs"
@@ -435,19 +435,22 @@ export const NewOrderModal: React.FC<NewOrderModalProps> = ({
                   <Search className="w-5 h-5 text-blue-500 absolute left-3 top-3.5" />
                 </div>
                 <p className="text-[11px] text-slate-500 mt-1.5">
-                  सिस्टम पहले से मौजूद ग्राहक को स्वतः पहचानेगा ताकि बार-बार नाम-पता दर्ज न करना पड़े।
+                  {t(
+                    "सिस्टम पहले से मौजूद ग्राहक को स्वतः पहचानेगा ताकि बार-बार नाम-पता दर्ज न करना पड़े।",
+                    "System auto-detects existing customers so details don't have to be re-entered."
+                  )}
                 </p>
               </div>
 
               {/* Matched Customers List */}
               {isSearching ? (
                 <div className="py-6 text-center text-xs text-slate-500">
-                  खोज जारी है... / Searching customer database...
+                  {t("खोज जारी है...", "Searching customer database...")}
                 </div>
               ) : searchResults.length > 0 ? (
                 <div className="space-y-2">
                   <p className="text-xs font-bold text-slate-500 uppercase">
-                    मिले हुए ग्राहक / Matched Customers ({searchResults.length}):
+                    {t(`मिले हुए ग्राहक (${searchResults.length})`, `Matched Customers (${searchResults.length})`)}:
                   </p>
                   <div className="divide-y divide-slate-100 border border-slate-200 rounded-xl overflow-hidden max-h-56 overflow-y-auto">
                     {searchResults.map((cust) => (
@@ -471,7 +474,7 @@ export const NewOrderModal: React.FC<NewOrderModalProps> = ({
 
                         <div className="flex items-center space-x-2">
                           <span className="text-xs font-semibold text-blue-600 bg-blue-100 px-2.5 py-1 rounded-lg">
-                            चुनें / Select →
+                            {t("चुनें →", "Select →")}
                           </span>
                         </div>
                       </div>
@@ -481,7 +484,7 @@ export const NewOrderModal: React.FC<NewOrderModalProps> = ({
               ) : mobileQuery.length >= 3 && !showNewCustomerForm ? (
                 <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 text-center">
                   <p className="text-xs text-slate-600 mb-2">
-                    इस नंबर का कोई पुराना रिकॉर्ड नहीं मिला। नया ग्राहक पंजीकृत करें?
+                    {t("इस नंबर का कोई पुराना रिकॉर्ड नहीं मिला। नया ग्राहक पंजीकृत करें?", "No past records found for this number. Register new customer?")}
                   </p>
                   <button
                     onClick={() => {
@@ -490,7 +493,7 @@ export const NewOrderModal: React.FC<NewOrderModalProps> = ({
                     }}
                     className="px-4 py-2 bg-blue-600 text-white rounded-lg text-xs font-bold hover:bg-blue-700 transition cursor-pointer"
                   >
-                    + नया ग्राहक पंजीकृत करें / Register New Customer
+                    + {t("नया ग्राहक पंजीकृत करें", "Register New Customer")}
                   </button>
                 </div>
               ) : null}
@@ -500,18 +503,18 @@ export const NewOrderModal: React.FC<NewOrderModalProps> = ({
                 <div className="border border-slate-200 p-4 rounded-xl bg-slate-50 space-y-3">
                   <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center space-x-1.5">
                     <UserPlus className="w-4 h-4 text-blue-600" />
-                    <span>नया ग्राहक पंजीकरण / New Customer Registration</span>
+                    <span>{t("नया ग्राहक पंजीकरण", "New Customer Registration")}</span>
                   </h3>
 
                   <form onSubmit={handleRegisterNewCustomer} className="space-y-3">
                     <div>
                       <label className="block text-xs font-medium text-slate-700 mb-1">
-                        ग्राहक का नाम / Customer Name *
+                        {t("ग्राहक का नाम *", "Customer Name *")}
                       </label>
                       <input
                         type="text"
                         required
-                        placeholder="उदा. राहुल कुमार / Rahul Kumar"
+                        placeholder={t("उदा. राहुल कुमार", "e.g. Rahul Kumar")}
                         value={newCustName}
                         onChange={(e) => setNewCustName(e.target.value)}
                         className="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm bg-white"
@@ -520,7 +523,7 @@ export const NewOrderModal: React.FC<NewOrderModalProps> = ({
 
                     <div>
                       <label className="block text-xs font-medium text-slate-700 mb-1">
-                        10 अंकों का मोबाइल नंबर / Mobile Number *
+                        {t("10 अंकों का मोबाइल नंबर *", "10-Digit Mobile Number *")}
                       </label>
                       <input
                         type="tel"
@@ -535,11 +538,11 @@ export const NewOrderModal: React.FC<NewOrderModalProps> = ({
 
                     <div>
                       <label className="block text-xs font-medium text-slate-700 mb-1">
-                        पता / Address (वैकल्पिक / Optional)
+                        {t("पता (वैकल्पिक)", "Address (Optional)")}
                       </label>
                       <input
                         type="text"
-                        placeholder="उदा. हाउस 142, सेक्टर 14, गुरुग्राम"
+                        placeholder={t("उदा. हाउस 142, सेक्टर 14, गुरुग्राम", "e.g. House 142, Sector 14, City")}
                         value={newCustAddress}
                         onChange={(e) => setNewCustAddress(e.target.value)}
                         className="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm bg-white"
@@ -550,7 +553,7 @@ export const NewOrderModal: React.FC<NewOrderModalProps> = ({
                       type="submit"
                       className="w-full py-2.5 rounded-lg bg-blue-600 text-white font-bold text-xs hover:bg-blue-700 transition cursor-pointer"
                     >
-                      ग्राहक सुरक्षित करें और आगे बढ़ें / Save Customer & Next →
+                      {t("ग्राहक सुरक्षित करें और आगे बढ़ें →", "Save Customer & Next →")}
                     </button>
                   </form>
                 </div>
@@ -565,7 +568,7 @@ export const NewOrderModal: React.FC<NewOrderModalProps> = ({
               {selectedCustomer && (
                 <div className="p-3.5 bg-blue-50 border border-blue-200 rounded-xl flex items-center justify-between">
                   <div>
-                    <span className="text-[11px] text-blue-700 font-bold uppercase">चयनित ग्राहक / Customer:</span>
+                    <span className="text-[11px] text-blue-700 font-bold uppercase">{t("चयनित ग्राहक", "Selected Customer")}:</span>
                     <h3 className="font-bold text-slate-900 text-sm">{selectedCustomer.name}</h3>
                     <p className="text-xs text-slate-600 font-mono">{selectedCustomer.mobile}</p>
                   </div>
@@ -573,7 +576,7 @@ export const NewOrderModal: React.FC<NewOrderModalProps> = ({
                     onClick={() => setStep(1)}
                     className="text-xs text-blue-600 font-semibold underline cursor-pointer"
                   >
-                    बदलें / Change
+                    {t("बदलें", "Change")}
                   </button>
                 </div>
               )}
@@ -581,17 +584,20 @@ export const NewOrderModal: React.FC<NewOrderModalProps> = ({
               <div className="border-2 border-dashed border-slate-300 rounded-2xl p-5 text-center bg-slate-50/50">
                 <Camera className="w-10 h-10 text-blue-600 mx-auto mb-2 animate-pulse" />
                 <h3 className="text-sm font-bold text-slate-800">
-                  हस्तलिखित रसीद का फोटो लें / Photograph Handwritten Slip
+                  {t("हस्तलिखित रसीद का फोटो लें", "Photograph Handwritten Slip")}
                 </h3>
                 <p className="text-xs text-slate-500 max-w-md mx-auto mb-4">
-                  दुकान की मौजूदा पर्ची का फोटो मोबाइल कैमरा से लें। OCR स्वचालित रूप से रसीद संख्या, कपड़े और डिलीवरी तारीख निकाल लेगा।
+                  {t(
+                    "दुकान की मौजूदा पर्ची का फोटो मोबाइल कैमरा से लें। OCR स्वचालित रूप से रसीद संख्या, कपड़े और डिलीवरी तारीख निकाल लेगा।",
+                    "Take a photo of the handwritten slip. OCR will automatically extract slip number, garments, and delivery date."
+                  )}
                 </p>
 
                 {/* Mobile Camera Upload Trigger */}
                 <div className="flex flex-wrap items-center justify-center gap-3">
                   <label className="flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-blue-600 text-white font-bold text-xs hover:bg-blue-700 transition cursor-pointer shadow-xs active:scale-95">
                     <Camera className="w-4 h-4" />
-                    <span>कैमरा खोलें / Open Camera</span>
+                    <span>{t("कैमरा खोलें", "Open Camera")}</span>
                     <input
                       type="file"
                       accept="image/*"
@@ -603,7 +609,7 @@ export const NewOrderModal: React.FC<NewOrderModalProps> = ({
 
                   <label className="flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-white text-slate-700 border border-slate-300 font-bold text-xs hover:bg-slate-100 transition cursor-pointer active:scale-95">
                     <Upload className="w-4 h-4" />
-                    <span>फ़ाइल अपलोड / Upload Image</span>
+                    <span>{t("फ़ाइल अपलोड", "Upload Image")}</span>
                     <input
                       type="file"
                       accept="image/*"
@@ -616,7 +622,7 @@ export const NewOrderModal: React.FC<NewOrderModalProps> = ({
                 {/* Quick Testing Sample Slips */}
                 <div className="mt-5 pt-4 border-t border-slate-200">
                   <p className="text-[11px] font-bold text-slate-500 uppercase mb-2">
-                    या त्वरित परीक्षण हेतु नमूना रसीद चुनें / Or select sample slip:
+                    {t("या त्वरित परीक्षण हेतु नमूना रसीद चुनें:", "Or select sample slip for quick test:")}
                   </p>
                   <div className="flex flex-wrap justify-center gap-2">
                     <button
@@ -624,21 +630,21 @@ export const NewOrderModal: React.FC<NewOrderModalProps> = ({
                       disabled={ocrLoading}
                       className="text-xs px-3 py-1.5 bg-white border border-slate-200 text-slate-700 rounded-lg hover:border-blue-400 hover:text-blue-700 transition cursor-pointer font-medium"
                     >
-                      📄 पर्ची #402 (राहुल - 5 शर्ट, 3 पैंट, 2 साड़ी)
+                      📄 {t("पर्ची #402 (राहुल - 5 शर्ट, 3 पैंट, 2 साड़ी)", "Slip #402 (Rahul - 5 Shirts, 3 Pants, 2 Sarees)")}
                     </button>
                     <button
                       onClick={() => handleProcessOcr({ sampleId: "sample_2" })}
                       disabled={ocrLoading}
                       className="text-xs px-3 py-1.5 bg-white border border-slate-200 text-slate-700 rounded-lg hover:border-blue-400 hover:text-blue-700 transition cursor-pointer font-medium"
                     >
-                      📄 पर्ची #510 (प्रिया - कुर्ती, सलवार, ब्लेज़र)
+                      📄 {t("पर्ची #510 (प्रिया - कुर्ती, सलवार, ब्लेज़र)", "Slip #510 (Priya - Kurti, Salwar, Blazer)")}
                     </button>
                     <button
                       onClick={() => handleProcessOcr({ sampleId: "sample_3" })}
                       disabled={ocrLoading}
                       className="text-xs px-3 py-1.5 bg-white border border-slate-200 text-slate-700 rounded-lg hover:border-blue-400 hover:text-blue-700 transition cursor-pointer font-medium"
                     >
-                      📄 पर्ची #625 (विक्रांत - चादर, कंबल)
+                      📄 {t("पर्ची #625 (विक्रांत - चादर, कंबल)", "Slip #625 (Vikrant - Bedsheet, Blanket)")}
                     </button>
                   </div>
                 </div>
@@ -648,7 +654,7 @@ export const NewOrderModal: React.FC<NewOrderModalProps> = ({
                 <div className="p-4 bg-indigo-50 border border-indigo-200 rounded-xl text-center space-y-1">
                   <div className="inline-block w-6 h-6 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
                   <p className="text-xs font-bold text-indigo-900">
-                    हस्तलिखित पर्ची का विश्लेषण जारी है... / Processing slip with OCR...
+                    {t("हस्तलिखित पर्ची का विश्लेषण जारी है...", "Processing handwritten slip with OCR...")}
                   </p>
                 </div>
               )}
@@ -659,7 +665,7 @@ export const NewOrderModal: React.FC<NewOrderModalProps> = ({
                   onClick={() => setStep(3)}
                   className="text-xs font-semibold text-slate-500 hover:text-slate-800 underline cursor-pointer"
                 >
-                  फोटो/OCR छोड़ें और सीधे कपड़े दर्ज करें / Skip slip photo & enter garments manually →
+                  {t("फोटो/OCR छोड़ें और सीधे कपड़े दर्ज करें →", "Skip slip photo & enter garments manually →")}
                 </button>
               </div>
             </div>
@@ -672,11 +678,11 @@ export const NewOrderModal: React.FC<NewOrderModalProps> = ({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200">
                 <div>
                   <label className="block text-xs font-bold text-slate-700 mb-1">
-                    हस्तलिखित रसीद संख्या / Slip Number:
+                    {t("हस्तलिखित रसीद संख्या", "Slip Number")}:
                   </label>
                   <input
                     type="text"
-                    placeholder="उदा. 402 या SLP-101"
+                    placeholder={t("उदा. 402 या SLP-101", "e.g. 402 or SLP-101")}
                     value={slipNumber}
                     onChange={(e) => setSlipNumber(e.target.value)}
                     className="w-full px-3 py-2 bg-white rounded-lg border border-slate-300 text-xs font-semibold"
@@ -684,14 +690,14 @@ export const NewOrderModal: React.FC<NewOrderModalProps> = ({
                   {uncertainFields.includes("slipNumber") && (
                     <span className="text-[11px] text-amber-700 font-bold flex items-center space-x-1 mt-0.5">
                       <AlertTriangle className="w-3 h-3 text-amber-600" />
-                      <span>⚠️ OCR संदिग्ध - कृपया जाँचें</span>
+                      <span>{t("⚠️ OCR संदिग्ध - कृपया जाँचें", "⚠️ OCR uncertain - please verify")}</span>
                     </span>
                   )}
                 </div>
 
                 <div>
                   <label className="block text-xs font-bold text-slate-700 mb-1">
-                    अपेक्षित डिलीवरी तारीख / Expected Delivery Date *:
+                    {t("अपेक्षित डिलीवरी तारीख *", "Expected Delivery Date *")}:
                   </label>
                   <input
                     type="date"
@@ -706,7 +712,7 @@ export const NewOrderModal: React.FC<NewOrderModalProps> = ({
               {/* Quick Catalogue Picker */}
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
-                  परिधान सूची से चुनें / Pick Garments from Catalogue:
+                  {t("परिधान सूची से चुनें:", "Pick Garments from Catalogue:")}
                 </label>
                 <div className="flex flex-wrap gap-1.5 max-h-36 overflow-y-auto p-1 bg-slate-50 rounded-xl border border-slate-200">
                   {catalogue.map((cat) => (
@@ -727,15 +733,15 @@ export const NewOrderModal: React.FC<NewOrderModalProps> = ({
               {/* Selected Garment Line Items */}
               <div className="border border-slate-200 rounded-xl overflow-hidden">
                 <div className="bg-slate-100 px-4 py-2 flex items-center justify-between text-xs font-bold text-slate-700">
-                  <span>ऑर्डर के कपड़े / Selected Garments ({selectedGarments.length})</span>
+                  <span>{t(`ऑर्डर के कपड़े (${selectedGarments.length})`, `Selected Garments (${selectedGarments.length})`)}</span>
                   <span className="text-blue-700">
-                    कुल संख्या / Total Qty: {totalExpectedQuantity} कपड़े
+                    {t(`कुल संख्या: ${totalExpectedQuantity} कपड़े`, `Total Qty: ${totalExpectedQuantity} pcs`)}
                   </span>
                 </div>
 
                 {selectedGarments.length === 0 ? (
                   <div className="p-6 text-center text-xs text-slate-500">
-                    अभी कोई कपड़ा नहीं चुना गया है। ऊपर दी गई सूची से कपड़े चुनें।
+                    {t("अभी कोई कपड़ा नहीं चुना गया है। ऊपर दी गई सूची से कपड़े चुनें।", "No garments selected yet. Pick items from the catalogue above.")}
                   </div>
                 ) : (
                   <div className="divide-y divide-slate-100 max-h-48 overflow-y-auto">
@@ -788,11 +794,11 @@ export const NewOrderModal: React.FC<NewOrderModalProps> = ({
               {/* Special Instructions */}
               <div>
                 <label className="block text-xs font-bold text-slate-700 mb-1">
-                  विशेष निर्देश / Special Instructions:
+                  {t("विशेष निर्देश", "Special Instructions")}:
                 </label>
                 <input
                   type="text"
-                  placeholder="उदा. साड़ी पर रोल पॉलिश, कॉलर पर कड़ा प्रेस, हैंगर पैकिंग"
+                  placeholder={t("उदा. साड़ी पर रोल पॉलिश, कॉलर पर कड़ा प्रेस, हैंगर पैकिंग", "e.g. Roll polish on saree, hard starch on collar, hanger packing")}
                   value={specialInstructions}
                   onChange={(e) => setSpecialInstructions(e.target.value)}
                   className="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white"
@@ -805,7 +811,7 @@ export const NewOrderModal: React.FC<NewOrderModalProps> = ({
                   onClick={() => setStep(2)}
                   className="text-xs text-slate-600 font-semibold cursor-pointer"
                 >
-                  ← पीछे / Back
+                  {t("← पीछे", "← Back")}
                 </button>
                 <button
                   type="button"
@@ -813,7 +819,7 @@ export const NewOrderModal: React.FC<NewOrderModalProps> = ({
                   disabled={selectedGarments.length === 0}
                   className="px-5 py-2.5 rounded-xl bg-blue-600 text-white font-bold text-xs hover:bg-blue-700 transition cursor-pointer disabled:opacity-50"
                 >
-                  समीक्षा करें / Review Order →
+                  {t("समीक्षा करें →", "Review Order →")}
                 </button>
               </div>
             </div>
@@ -824,7 +830,7 @@ export const NewOrderModal: React.FC<NewOrderModalProps> = ({
             <div className="space-y-4">
               <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
                 <div className="flex items-center justify-between border-b border-slate-200 pb-2">
-                  <span className="text-xs font-bold text-slate-500 uppercase">ग्राहक / Customer:</span>
+                  <span className="text-xs font-bold text-slate-500 uppercase">{t("ग्राहक", "Customer")}:</span>
                   <div className="text-right">
                     <span className="font-bold text-slate-900 text-sm">{selectedCustomer?.name}</span>
                     <p className="text-xs text-slate-500 font-mono">{selectedCustomer?.mobile}</p>
@@ -832,15 +838,15 @@ export const NewOrderModal: React.FC<NewOrderModalProps> = ({
                 </div>
 
                 <div className="flex items-center justify-between border-b border-slate-200 pb-2">
-                  <span className="text-xs font-bold text-slate-500 uppercase">रसीद संख्या / Slip No:</span>
+                  <span className="text-xs font-bold text-slate-500 uppercase">{t("रसीद संख्या", "Slip No")}:</span>
                   <span className="font-bold text-slate-900 text-xs">
-                    {slipNumber || "लागू नहीं / None"}
+                    {slipNumber || t("लागू नहीं", "None")}
                   </span>
                 </div>
 
                 <div className="flex items-center justify-between border-b border-slate-200 pb-2">
                   <span className="text-xs font-bold text-slate-500 uppercase">
-                    डिलीवरी तारीख / Expected Delivery:
+                    {t("डिलीवरी तारीख", "Expected Delivery")}:
                   </span>
                   <span className="font-bold text-blue-700 text-xs font-mono">
                     {expectedDeliveryDate}
@@ -849,10 +855,10 @@ export const NewOrderModal: React.FC<NewOrderModalProps> = ({
 
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-slate-500 uppercase">
-                    कुल अपेक्षित कपड़े / Total Expected:
+                    {t("कुल अपेक्षित कपड़े", "Total Expected")}:
                   </span>
                   <span className="font-black text-lg text-red-700 bg-red-50 px-2.5 py-0.5 rounded-lg border border-red-200">
-                    {totalExpectedQuantity} कपड़े / Pcs
+                    {totalExpectedQuantity} {t("कपड़े", "Pcs")}
                   </span>
                 </div>
               </div>
@@ -860,7 +866,7 @@ export const NewOrderModal: React.FC<NewOrderModalProps> = ({
               {/* Garment summary table */}
               <div className="border border-slate-200 rounded-xl overflow-hidden text-xs">
                 <div className="bg-slate-100 px-3 py-2 font-bold text-slate-700">
-                  कपड़ों का विवरण / Garment Breakdown:
+                  {t("कपड़ों का विवरण", "Garment Breakdown")}:
                 </div>
                 <div className="divide-y divide-slate-100 max-h-40 overflow-y-auto">
                   {selectedGarments.map((g, idx) => (
@@ -868,7 +874,7 @@ export const NewOrderModal: React.FC<NewOrderModalProps> = ({
                       <span className="font-medium text-slate-900">
                         {g.hindiName} ({g.englishName})
                       </span>
-                      <span className="font-bold text-slate-800 font-mono">{g.quantity} नग</span>
+                      <span className="font-bold text-slate-800 font-mono">{g.quantity} {t("नग", "Pcs")}</span>
                     </div>
                   ))}
                 </div>
@@ -876,8 +882,10 @@ export const NewOrderModal: React.FC<NewOrderModalProps> = ({
 
               {/* Business Rule Reminder */}
               <p className="text-[11px] text-slate-500 bg-blue-50 p-2.5 rounded-lg border border-blue-200">
-                ℹ️ ऑर्डर सुरक्षित होने के बाद प्रारंभिक स्थिति <strong>QUANTITY_PENDING</strong> रहेगी।
-                कार्यशाला स्टाफ कपड़ों की भौतिक जाँच करने के बाद ही QR कोड जनरेट कर सकेगा।
+                {t(
+                  "ℹ️ ऑर्डर सुरक्षित होने के बाद प्रारंभिक स्थिति QUANTITY_PENDING रहेगी। कार्यशाला स्टाफ कपड़ों की भौतिक जाँच करने के बाद ही QR कोड जनरेट कर सकेगा।",
+                  "ℹ️ Order status will start at QUANTITY_PENDING. Workshop staff can generate QR code after physical garment count verification."
+                )}
               </p>
 
               <div className="flex justify-between items-center pt-2">
@@ -886,7 +894,7 @@ export const NewOrderModal: React.FC<NewOrderModalProps> = ({
                   onClick={() => setStep(3)}
                   className="text-xs text-slate-600 font-semibold cursor-pointer"
                 >
-                  ← बदलाव करें / Edit
+                  {t("← बदलाव करें", "← Edit")}
                 </button>
                 <button
                   type="button"
@@ -894,7 +902,7 @@ export const NewOrderModal: React.FC<NewOrderModalProps> = ({
                   disabled={isSubmitting}
                   className="px-6 py-3 rounded-xl bg-blue-600 text-white font-bold text-sm hover:bg-blue-700 transition cursor-pointer shadow-md disabled:opacity-50"
                 >
-                  {isSubmitting ? "सुरक्षित किया जा रहा है..." : "✓ ऑर्डर सुरक्षित करें / Save Order"}
+                  {isSubmitting ? t("सुरक्षित किया जा रहा है...", "Saving...") : t("✓ ऑर्डर सुरक्षित करें", "✓ Save Order")}
                 </button>
               </div>
             </div>

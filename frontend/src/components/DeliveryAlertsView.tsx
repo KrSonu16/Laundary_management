@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { OrderDto } from "@/lib/types";
+import { useLanguage } from "@/lib/LanguageContext";
 import {
   Bell,
   Clock,
@@ -20,6 +21,7 @@ interface DeliveryAlertsViewProps {
 export const DeliveryAlertsView: React.FC<DeliveryAlertsViewProps> = ({
   onSelectOrder,
 }) => {
+  const { t } = useLanguage();
   const [alerts, setAlerts] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -44,10 +46,13 @@ export const DeliveryAlertsView: React.FC<DeliveryAlertsViewProps> = ({
           </div>
           <div>
             <h2 className="text-base sm:text-lg font-black text-slate-900">
-              डिलीवरी अलर्ट केंद्र / Delivery Alerts Center
+              {t("डिलीवरी अलर्ट केंद्र", "Delivery Alerts Center")}
             </h2>
             <p className="text-xs text-slate-500">
-              अपेक्षित तारीख के अनुसार स्वचालित चेतावनी। विलंबित और आज देय ऑर्डर को तुरंत प्राथमिकता दें।
+              {t(
+                "अपेक्षित तारीख के अनुसार स्वचालित चेतावनी। विलंबित और आज देय ऑर्डर को तुरंत प्राथमिकता दें।",
+                "Automated delivery date warnings. Prioritize overdue and due-today orders immediately."
+              )}
             </p>
           </div>
         </div>
@@ -55,7 +60,7 @@ export const DeliveryAlertsView: React.FC<DeliveryAlertsViewProps> = ({
 
       {isLoading ? (
         <div className="p-12 text-center text-xs text-slate-500 bg-white rounded-2xl border border-slate-200">
-          अलर्ट लोड हो रहे हैं... / Loading alerts...
+          {t("अलर्ट लोड हो रहे हैं...", "Loading alerts...")}
         </div>
       ) : alerts ? (
         <div className="space-y-6">
@@ -66,11 +71,11 @@ export const DeliveryAlertsView: React.FC<DeliveryAlertsViewProps> = ({
                 <div className="flex items-center space-x-2">
                   <ShieldAlert className="w-5 h-5 animate-bounce" />
                   <span className="font-extrabold text-sm">
-                    1. विलंबित ऑर्डर / Overdue Orders ({alerts.overdue.count})
+                    {t(`1. विलंबित ऑर्डर (${alerts.overdue.count})`, `1. Overdue Orders (${alerts.overdue.count})`)}
                   </span>
                 </div>
                 <span className="text-xs bg-red-800 text-white px-2 py-0.5 rounded font-bold uppercase">
-                  अति-महत्वपूर्ण / Critical
+                  {t("अति-महत्वपूर्ण", "Critical")}
                 </span>
               </div>
 
@@ -86,25 +91,25 @@ export const DeliveryAlertsView: React.FC<DeliveryAlertsViewProps> = ({
                         <span className="font-black text-slate-900 text-sm">{ord.orderNumber}</span>
                         {ord.slipNumber && (
                           <span className="text-[11px] bg-slate-100 px-1.5 py-0.2 rounded font-mono">
-                            रसीद: {ord.slipNumber}
+                            {t("रसीद", "Slip")}: {ord.slipNumber}
                           </span>
                         )}
                         <span className="text-xs font-bold text-red-700 bg-red-100 px-2 py-0.5 rounded">
-                          स्थिति: {ord.status}
+                          {t("स्थिति", "Status")}: {ord.status}
                         </span>
                       </div>
                       <p className="text-xs text-slate-600 mt-0.5">
                         {ord.customerName} • <span className="font-mono">{ord.customerMobile}</span> •{" "}
-                        <strong>{ord.expectedQuantity} कपड़े</strong>
+                        <strong>{ord.expectedQuantity} {t("कपड़े", "pcs")}</strong>
                       </p>
                     </div>
 
                     <div className="flex items-center space-x-3 text-right">
                       <div>
                         <span className="text-xs font-bold text-red-700 block">
-                          देय तारीख: {new Date(ord.expectedDeliveryDate).toLocaleDateString("en-IN")}
+                          {t("देय तारीख", "Due Date")}: {new Date(ord.expectedDeliveryDate).toLocaleDateString("en-IN")}
                         </span>
-                        <span className="text-[11px] text-slate-400">तारीख बीत चुकी है</span>
+                        <span className="text-[11px] text-slate-400">{t("तारीख बीत चुकी है", "Past deadline")}</span>
                       </div>
                       <ArrowRight className="w-4 h-4 text-red-600" />
                     </div>
@@ -121,11 +126,11 @@ export const DeliveryAlertsView: React.FC<DeliveryAlertsViewProps> = ({
                 <div className="flex items-center space-x-2">
                   <Clock className="w-5 h-5" />
                   <span className="font-extrabold text-sm">
-                    2. आज देय / Due Today ({alerts.dueToday.count})
+                    {t(`2. आज देय (${alerts.dueToday.count})`, `2. Due Today (${alerts.dueToday.count})`)}
                   </span>
                 </div>
                 <span className="text-xs bg-amber-800 text-white px-2 py-0.5 rounded font-bold uppercase">
-                  आज ही डिलीवरी / Due Today
+                  {t("आज ही डिलीवरी", "Due Today")}
                 </span>
               </div>
 
@@ -140,19 +145,19 @@ export const DeliveryAlertsView: React.FC<DeliveryAlertsViewProps> = ({
                       <div className="flex items-center space-x-2">
                         <span className="font-black text-slate-900 text-sm">{ord.orderNumber}</span>
                         <span className="text-xs font-bold text-amber-800 bg-amber-100 px-2 py-0.5 rounded">
-                          स्थिति: {ord.status}
+                          {t("स्थिति", "Status")}: {ord.status}
                         </span>
                       </div>
                       <p className="text-xs text-slate-600 mt-0.5">
                         {ord.customerName} • <span className="font-mono">{ord.customerMobile}</span> •{" "}
-                        <strong>{ord.expectedQuantity} कपड़े</strong>
+                        <strong>{ord.expectedQuantity} {t("कपड़े", "pcs")}</strong>
                       </p>
                     </div>
 
                     <div className="flex items-center space-x-3 text-right">
                       <div>
-                        <span className="text-xs font-bold text-amber-800 block">आज शाम तक देय</span>
-                        <span className="text-[11px] text-slate-400">ग्राहक आ सकता है</span>
+                        <span className="text-xs font-bold text-amber-800 block">{t("आज शाम तक देय", "Due by this evening")}</span>
+                        <span className="text-[11px] text-slate-400">{t("ग्राहक आ सकता है", "Customer expected")}</span>
                       </div>
                       <ArrowRight className="w-4 h-4 text-amber-600" />
                     </div>
@@ -169,7 +174,7 @@ export const DeliveryAlertsView: React.FC<DeliveryAlertsViewProps> = ({
                 <div className="flex items-center space-x-2">
                   <AlertTriangle className="w-5 h-5" />
                   <span className="font-extrabold text-sm">
-                    3. कल देय / Urgent (1 Day Left) ({alerts.urgent.count})
+                    {t(`3. कल देय (1 दिन शेष) (${alerts.urgent.count})`, `3. Urgent (1 Day Left) (${alerts.urgent.count})`)}
                   </span>
                 </div>
               </div>
@@ -184,7 +189,7 @@ export const DeliveryAlertsView: React.FC<DeliveryAlertsViewProps> = ({
                     <div>
                       <span className="font-black text-slate-900 text-sm">{ord.orderNumber}</span>
                       <p className="text-xs text-slate-600 mt-0.5">
-                        {ord.customerName} • {ord.expectedQuantity} कपड़े • स्थिति: {ord.status}
+                        {ord.customerName} • {ord.expectedQuantity} {t("कपड़े", "pcs")} • {t("स्थिति", "Status")}: {ord.status}
                       </p>
                     </div>
                     <ArrowRight className="w-4 h-4 text-orange-600" />
@@ -201,11 +206,14 @@ export const DeliveryAlertsView: React.FC<DeliveryAlertsViewProps> = ({
                 <div className="flex items-center space-x-2">
                   <CheckCircle2 className="w-5 h-5" />
                   <span className="font-extrabold text-sm">
-                    4. दुकान में तैयार - पिकअप प्रतीक्षारत / Ready for Pickup ({alerts.pickupPending.count})
+                    {t(
+                      `4. दुकान में तैयार - पिकअप प्रतीक्षारत (${alerts.pickupPending.count})`,
+                      `4. Ready in Shop - Waiting Pickup (${alerts.pickupPending.count})`
+                    )}
                   </span>
                 </div>
                 <span className="text-xs bg-emerald-800 text-white px-2 py-0.5 rounded font-bold">
-                  WhatsApp भेजा गया / Ready
+                  {t("WhatsApp भेजा गया", "WhatsApp Sent")}
                 </span>
               </div>
 
@@ -220,18 +228,18 @@ export const DeliveryAlertsView: React.FC<DeliveryAlertsViewProps> = ({
                       <div className="flex items-center space-x-2">
                         <span className="font-black text-slate-900 text-sm">{ord.orderNumber}</span>
                         <span className="text-xs font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded">
-                          पूरी तरह तैयार / READY
+                          {t("पूरी तरह तैयार", "Ready for Handover")}
                         </span>
                       </div>
                       <p className="text-xs text-slate-600 mt-0.5">
                         {ord.customerName} • <span className="font-mono">{ord.customerMobile}</span> •{" "}
-                        <strong>{ord.expectedQuantity} कपड़े</strong>
+                        <strong>{ord.expectedQuantity} {t("कपड़े", "pcs")}</strong>
                       </p>
                     </div>
 
                     <div className="flex items-center space-x-3 text-right">
                       <span className="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-lg">
-                        सुपुर्दगी करें / Handover →
+                        {t("सुपुर्दगी करें →", "Handover →")}
                       </span>
                     </div>
                   </div>
