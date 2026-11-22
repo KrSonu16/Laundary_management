@@ -1,14 +1,8 @@
 # dependencies
 node_modules/
-*/node_modules/
-*/*/node_modules/
-.pnpm-store/
 
 # next.js
 .next/
-*/.next/
-.next-build/
-*/.next-build/
 out/
 build/
 dist/
@@ -25,14 +19,13 @@ yarn-error.log*
 .env.development.local
 .env.test.local
 .env.production.local
-backend/.env
-frontend/.env
 !.env.example
-!backend/.env.example
-!frontend/.env.example
 
-# vercel & build caches
-.vercel
+# build caches
 *.tsbuildinfo
 next-env.d.ts
 .turbo
+.vercel
+
+# database
+drizzle/meta/
